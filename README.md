@@ -1,0 +1,1 @@
+Examples for OpenStreetMap presentation at JUG Zielona Góra
