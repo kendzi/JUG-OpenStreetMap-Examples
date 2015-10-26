@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Routing demo</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+</head>
+<body>
+	<div id="map" style="width: 600px; height: 400px"></div>
+
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="Polyline.encoded.js" type="text/javascript"></script>
+
+
+	<script>
+
+		var map = L.map('map').setView([51.937, 15.507], 16);
+
+		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+			attribution: '© autorzy <a href="http://openstreetmap.org">OpenStreetMap</a>'
+		}).addTo(map);
+
+
+		var startMarker
+		var endMarker
+		var path =  L.polyline([]).addTo(map);;
+
+		function onMapClick(e) {
+
+			if (!startMarker) {
+				startMarker = L.marker(e.latlng).addTo(map);
+			} else if (!endMarker) {
+				endMarker = L.marker(e.latlng).addTo(map);
+			} else {
+				endMarker.setLatLng(e.latlng);
+			}
+
+			if (startMarker && endMarker) {
+
+				$.ajax({
+					url: "https://api-osrm-routed-production.tilestream.net/viaroute",
+					data: {
+						"loc": [cord(startMarker), cord(endMarker)],
+						"instructions": "true"
+					},
+					traditional: true,
+					success: function(result) {
+
+						var polyline = decode(result.route_geometry);
+
+						path.setLatLngs(polyline);
+					}
+				});
+			}
+		};
+
+		map.on('click', onMapClick);
+
+		function decode(encoded) {
+			return new L.Polyline(L.PolylineUtil.decode(encoded, 6)).getLatLngs();
+		}
+
+		function cord(marker) {
+			return marker.getLatLng().lat + "," + marker.getLatLng().lng;
+		}
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Reverse Geocoding Example</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+</head>
+<body>
+	<div id="map" style="width: 600px; height: 400px"></div>
+	<div>
+		<input id="query" type="input" value="Nowe Kramsko" />
+		<button>Go!</button>
+	</div>
+
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+	<script>
+
+		var map = L.map('map').setView([51.937, 15.507], 16);
+
+		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+			attribution: '© autorzy <a href="http://openstreetmap.org">OpenStreetMap</a>'
+		}).addTo(map);
+
+		$(document).ready(function(){
+			$("button").click(function(){
+
+				$.ajax({
+					url: "http://nominatim.openstreetmap.org/search",
+					data: {
+						"q": $('#query').val(),
+						"format":"json",
+						"polygon":"1",
+						"addressdetails":"1"
+					},
+					success: function(result){
+						if (result.length > 0) {
+							var location = result[0];
+							L.marker([location.lat, location.lon]).addTo(map).bindPopup(location.display_name).openPopup();
+						}
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>

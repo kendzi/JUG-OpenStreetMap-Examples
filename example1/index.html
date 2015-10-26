@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Quick Start Guide Example</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+</head>
+<body>
+	<div id="map" style="width: 600px; height: 400px"></div>
+
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+	<script>
+
+		var map = L.map('map').setView([51.937, 15.507], 16);
+
+		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+			attribution: '© autorzy <a href="http://openstreetmap.org">OpenStreetMap</a>'
+		}).addTo(map);
+
+
+		L.marker([51.93826, 15.50519]).addTo(map)
+			.bindPopup("<b>Hello world!</b><br />I am a popup in city hall.").openPopup();
+
+		L.circle([51.93561, 15.51149], 100, {
+			color: 'red',
+			fillColor: '#f03',
+			fillOpacity: 0.5
+		}).addTo(map).bindPopup("I am a circle in focus.");
+
+		L.polygon([
+			[51.93854, 15.51012],
+			[51.93919, 15.51261],
+			[51.93789, 15.51478],
+			[51.93686, 15.51304]
+		]).addTo(map).bindPopup("I am a polygon.");
+
+		var popup = L.popup();
+
+		function onMapClick(e) {
+			popup
+				.setLatLng(e.latlng)
+				.setContent("You clicked the map at " + e.latlng.toString())
+				.openOn(map);
+		}
+
+		map.on('click', onMapClick);
+		
+		<!--
+		L.control.layers({ 	
+			"layer1": L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"),
+			"layer2": L.tileLayer("http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png")
+			}, {}).addTo(map);
+		-->
+	</script>
+</body>
+</html>

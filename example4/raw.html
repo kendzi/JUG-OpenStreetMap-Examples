@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Geocoding Example</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+	<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
+</head>
+<body>
+	<div id="map" style="width: 600px; height: 400px"></div>
+
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
+
+	<script>
+
+		var map = L.map('map');
+
+
+
+		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+			attribution: '© autorzy <a href="http://openstreetmap.org">OpenStreetMap</a>'
+		}).addTo(map);
+
+		map.on('zoomend', loadRawData);
+		map.on('moveend', loadRawData);
+		map.on('load', loadRawData);
+
+		map.setView([51.937, 15.507], 16)
+
+		function loadRawData() {
+			if (map.getZoom() < 16) {
+				console.log(map.getZoom());
+				return;
+			}
+
+			var bounds = toOverpassBBoxString(map.getBounds());
+
+			var query =
+				  "[out:json]; "
+				+ "node "
+				+ "	[amenity=pub] "
+				+ "	(" + bounds +" ); "
+				+ "out;";
+
+			$.ajax({
+				url: "http://overpass-api.de/api/interpreter",
+				method: "POST",
+				data: query,
+				success: function(result) {
+					if (result.elements) {
+						result.elements.forEach(function(row) {
+							L.marker([row.lat, row.lon]).bindLabel(row.tags["name"]).addTo(map);
+						})
+					}
+				}
+			});
+		}
+
+		function toOverpassBBoxString(bounts) {
+			var sw = bounts.getSouthWest();
+			var ne = bounts.getNorthEast();
+
+			return [sw.lat, sw.lng, ne.lat, ne.lng].join(',');
+		}
+
+		var popup = L.popup();
+
+
+	</script>
+</body>
+</html>
