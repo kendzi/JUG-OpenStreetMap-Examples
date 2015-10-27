@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Leaflet Quick Start Guide Example</title>
+	<title>Leaflet Example</title>
 	<meta charset="utf-8" />
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +16,7 @@
 
 		var map = L.map('map').setView([51.937, 15.507], 16);
 
-		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		var osmLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 18,
 			attribution: '© autorzy <a href="http://openstreetmap.org">OpenStreetMap</a>'
 		}).addTo(map);
@@ -49,12 +49,13 @@
 
 		map.on('click', onMapClick);
 
-		/*
+/*
 		L.control.layers({
-			"layer1": L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"),
-			"layer2": L.tileLayer("http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png")
+			// http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+			"Layer 1": osmLayer,
+			"Layer 2": L.tileLayer("http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png", { attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' })
 			}, {}).addTo(map);
-		*/
+*/
 	</script>
 </body>
 </html>
